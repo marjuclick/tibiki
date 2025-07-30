@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nossas Memórias</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 50%, #FFB3B3 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .gallery-container {
+            padding: 30px;
+            position: relative;
+        }
+
+        .media-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .media-item {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .caption {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.1em;
+            margin-top: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .nav-btn {
+            background: linear-gradient(45deg, #FF8E8E, #FF6B6B);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-btn:active {
+            transform: translateY(0);
+        }
+
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .counter {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        .special-container {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .heart-clickable {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            max-width: 200px;
+            max-height: 200px;
+        }
+
+        .heart-clickable:hover {
+            transform: scale(1.1);
+        }
+
+        .heart-clickable:active {
+            transform: scale(0.9);
+        }
+
+
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes heartBeat {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .heart-beat {
+            animation: heartBeat 0.6s ease;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .gallery-container {
+                padding: 20px;
+            }
+
+            .media-container {
+                height: 300px;
+            }
+
+            .navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-btn {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Nossas melhores memórias, onde guardamos nossos momentos mais especiais</h1>
+            <p>Aqui está todos os nosso momentos juntos, onde vivemos muitas aventuras e criamos momentos inesquecíveis</p>
+        </div>
+
+        <div class="gallery-container">
+            <div class="media-container">
+                <div class="loading">Carregando...</div>
+                <img id="media-display" class="media-item" style="display: none;">
+                <video id="video-display" class="media-item" controls style="display: none;"></video>
+                <div id="special-container" class="special-container">
+                    <img id="heart-clickable" class="heart-clickable" src="icon-coracao-vermelho.png" alt="Coração">
+                    <p style="color: #666; margin-top: 20px; font-size: 1.1em;">Clique no coração para uma surpresa especial ❤️</p>
+                </div>
+            </div>
+
+            <div class="caption" id="caption">
+                Clique nos botões para navegar
+            </div>
+
+            <div class="navigation">
+                <button class="nav-btn" id="prev-btn" onclick="previousItem()">
+                    ⬅️ Anterior
+                </button>
+                <button class="nav-btn" id="next-btn" onclick="nextItem()">
+                    Próximo ➡️
+                </button>
+            </div>
+
+            <div class="counter" id="counter">
+                0 de 0
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Array com os itens da galeria (fotos e vídeos)
+        const galleryItems = [
+            {
+                type: 'image',
+                src: 'WhatsApp Image 2025-07-29 at 17.03.30.jpeg',
+                caption: 'Nossa primeira viagem, o momento mais inesquecível da nossa história'
+            },
+            {
+                type: 'image',
+                src: "bh-eu-e-ele.jpeg",
+                caption: 'Aqui foi nossa primeira viagem longa, mais de 400km rodados e muitas pausagens e paradas até nosso destino'
+            },
+            {
+                type: 'image',
+                src: 'foto-nossa-bh-bar.jpeg',
+                caption: 'Hmmmm uma coquinha e um monster no meio do mato'
+            },
+            {
+                type: 'image',
+                src: 'peugeot-sujo.jpeg',
+                caption: 'pense num coitado que sofreu KKKKKKK, todo sujinho'
+            },
+            {
+                type: 'image',
+                src: 'barro.jpeg',
+                caption: 'Só não sofreu mais que esse'
+            },
+            {
+                type: 'video',
+                src: 'video-do-barro.mp4',
+                caption: 'Esse dia foi desesperador, mas no final tudo foi muito engraçado. Pois agora temos história pra contar'
+            },
+            {
+                type: 'image',
+                src: 'viagem-sc.jpeg',
+                caption: 'Nossa viagem pro Sul, onde criamos muuitas memórias inesquecíveis'
+            },
+            {
+                type: 'video',
+                src: 'video-hotwells.mp4',
+                caption: 'Lembra de como foi legal esse dia? De como ficamos tão animados com as manobras e impressionados com tanta habilidade'
+            },
+            {
+                type: 'image',
+                src: 'holambra.jpeg',
+                caption: 'Quando a gente foi pra Holambra, foi uma viagem tão bonita'
+            },
+            {
+                type: 'image',
+                src: 'angra2.jpeg',
+                caption: 'Esse dia em Angra, mal sabíamos que iriamos vivenciar tanta coisa'
+            },
+            {
+                type: 'video',
+                src: 'angra.mp4',
+                caption: 'Esse dia em Angra foi inesquecível, nos divertimos tanto nessa viagem, muitas aventuras com as suas habilidades de manobra'
+            },
+            {
+                type: 'image',
+                src: 'campos.jpeg',
+                caption: 'Também temos essa romântica, quando fomos para Campos e soubemos aproveitar cada espaço de lá'
+            },
+
+            {
+                type: 'image',
+                src: "amantikir.jpeg",
+                caption: 'Esse dia no Amantikir, passeamos bastante e nos divertimos muito, olhando cada cantinho e aproveitando cada momento'
+            },
+            {
+                type: 'image',
+                src: 'eu-e-ele-em-sp.jpeg',
+                caption: 'Nossa viagem pra SP, onde foi muuuuito gostoso. Conhecemos cada lugar de lá (ou tentamos), foi muito especial, ainda mais que era seu aniversário'
+            },
+            {
+                type: 'image',
+                src: 'carro.jpeg',
+                caption: 'Quando a gente foi lá na Jardim Europa ver os carros, foi muito legal, ainda quero fazer de novo esse rolê'
+            },
+            {
+                type: 'image',
+                src: 'bk-sp.jpeg',
+                caption: 'Também não podemos esquecer das nossas idas pra SP para comer um bkzinho e ficar de olho na rua. Ninguém entende esse rolê nosso, porém é muito especial'
+            },
+            {
+                type: 'image',
+                src: 'olimpia.jpeg',
+                caption: 'E essa de Olímpia? O tanto que foi divertido, que a gente desceu vaaaaarias vezes naquele brinquedo kkkkkk'
+            },
+            {
+                type: 'video',
+                src: 'donuts.mp4',
+                caption: 'O dia que você me encheu de donuts, e eu amei rsrs'
+            },
+            {
+                type: 'image',
+                src: 'dia1.jpeg',
+                caption: 'Em tantas memórias, também não podemos esquecer do nosso começo. Onde nem sabiamos aonde nosso amor iria chegar.'
+            },
+            {
+                type: 'special',
+                src: 'Yohproject-Cute-Heart.256.png',
+                caption: 'Clique no coração para uma surpresa especial ❤️'
+            },
+
+
+        ];
+
+        let currentIndex = 0;
+        const mediaDisplay = document.getElementById('media-display');
+        const videoDisplay = document.getElementById('video-display');
+        const caption = document.getElementById('caption');
+        const counter = document.getElementById('counter');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const loading = document.querySelector('.loading');
+
+        // Função para carregar um item da galeria
+        function loadItem(index) {
+            if (index < 0 || index >= galleryItems.length) return;
+
+            loading.style.display = 'block';
+            mediaDisplay.style.display = 'none';
+            videoDisplay.style.display = 'none';
+
+            // Esconder container especial
+            const specialContainer = document.getElementById('special-container');
+            specialContainer.style.display = 'none';
+
+            const item = galleryItems[index];
+
+            setTimeout(() => {
+                if (item.type === 'image') {
+                    mediaDisplay.src = item.src;
+                    mediaDisplay.style.display = 'block';
+                    videoDisplay.style.display = 'none';
+                } else if (item.type === 'video') {
+                    videoDisplay.src = item.src;
+                    videoDisplay.style.display = 'block';
+                    mediaDisplay.style.display = 'none';
+                } else if (item.type === 'audio') {
+                    // Para áudios, mostramos uma imagem placeholder
+                    mediaDisplay.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjNjY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7DgHVkaW8gLSBDbGlxdWUgcGFyYSBvdXZpciA8L3RleHQ+PC9zdmc+';
+                    mediaDisplay.style.display = 'block';
+                    videoDisplay.style.display = 'none';
+                } else if (item.type === 'special') {
+                    // Mostrar o container especial
+                    specialContainer.style.display = 'block';
+                    mediaDisplay.style.display = 'none';
+                    videoDisplay.style.display = 'none';
+                }
+
+                caption.textContent = item.caption;
+                counter.textContent = `${index + 1} de ${galleryItems.length}`;
+
+                // Atualizar estado dos botões
+                prevBtn.disabled = index === 0;
+                nextBtn.disabled = index === galleryItems.length - 1;
+
+                loading.style.display = 'none';
+            }, 300);
+        }
+
+        // Função para ir para o item anterior
+        function previousItem() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                loadItem(currentIndex);
+            }
+        }
+
+        // Função para ir para o próximo item
+        function nextItem() {
+            if (currentIndex < galleryItems.length - 1) {
+                currentIndex++;
+                loadItem(currentIndex);
+            }
+        }
+
+        // Navegação com teclado
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'ArrowLeft') {
+                previousItem();
+            } else if (event.key === 'ArrowRight') {
+                nextItem();
+            }
+        });
+
+        // Carregar o primeiro item quando a página carregar
+        window.addEventListener('load', function () {
+            if (galleryItems.length > 0) {
+                loadItem(0);
+            }
+
+            // Função para o clique no coração
+            document.getElementById('heart-clickable').addEventListener('click', function () {
+                this.classList.add('heart-beat');
+
+                // Redirecionar para a página especial após a animação
+                setTimeout(() => {
+                    window.location.href = 'surpresa.html';
+                }, 600);
+            });
+        });
+
+        // Tratamento de erros para mídia
+        mediaDisplay.addEventListener('error', function () {
+            this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmY2NjY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZW0gbsOjbyBlbmNvbnRyYWRhPC90ZXh0Pjwvc3ZnPg==';
+            caption.textContent = 'Imagem não encontrada';
+        });
+
+        videoDisplay.addEventListener('error', function () {
+            this.style.display = 'none';
+            mediaDisplay.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmY2NjY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5Ww61kZW8gbsOjbyBlbmNvbnRyYWRvPC90ZXh0Pjwvc3ZnPg==';
+            mediaDisplay.style.display = 'block';
+            caption.textContent = 'Vídeo não encontrado';
+        });
+    </script>
+</body>
+
+</html>
